@@ -1,4 +1,6 @@
-<?php namespace Haruncpi\LaravelIdGenerator;
+<?php
+
+namespace Haruncpi\LaravelIdGenerator;
 
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -100,8 +102,8 @@ class IdGenerator
         $field = array_key_exists('field', $configArr) ? $configArr['field'] : 'id';
         $prefix = $configArr['prefix'];
         $resetOnPrefixChange =  array_key_exists('reset_on_prefix_change', $configArr)
-                                ? $configArr['reset_on_prefix_change']
-                                : false;
+            ? $configArr['reset_on_prefix_change']
+            : false;
         $length = $configArr['length'];
 
         $fieldInfo = (new self)->getFieldType($table, $field);
@@ -122,8 +124,8 @@ class IdGenerator
 
         if (array_key_exists('where', $configArr)) {
             $whereString .= " WHERE ";
-            foreach ($configArr['where'] as $row) {
-                $whereString .= $row[0] . "=" . $row[1] . " AND ";
+            foreach ($configArr['where'] as $clave => $row) {
+                $whereString .= $clave . "=" . $row . " AND ";
             }
         }
         $whereString = rtrim($whereString, 'AND ');
@@ -134,10 +136,10 @@ class IdGenerator
 
         if ($total[0]->total) {
             if ($resetOnPrefixChange) {
-                $maxIdSql = "SELECT MAX(%s) AS maxid FROM %s WHERE %s LIKE %s";
-                $maxQuery = sprintf($maxIdSql, $field, $table, $field, "'" . $prefix . "%'");
+                $maxIdSql = "SELECT MAX(%s) AS maxid FROM %s WHERE %s LIKE %s %s";
+                $maxQuery = sprintf($maxIdSql, $field, $table, $field, "'" . $prefix . "%'", trim(str_replace("WHERE", "AND", $whereString)));
             } else {
-                $maxQuery = sprintf("SELECT MAX(%s) AS maxid FROM %s", $field, $table);
+                $maxQuery = sprintf("SELECT MAX(%s) AS maxid FROM %s%s", $field, $table, $whereString);
             }
 
             $queryResult = DB::select($maxQuery);
