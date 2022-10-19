@@ -1,6 +1,6 @@
 <?php
 
-namespace Haruncpi\LaravelIdGenerator;
+namespace jhamnerx\LaravelIdGenerator;
 
 use Illuminate\Support\Facades\DB;
 use Exception;

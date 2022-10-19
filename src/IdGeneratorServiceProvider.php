@@ -1,4 +1,6 @@
-<?php namespace Haruncpi\LaravelIdGenerator;
+<?php
+
+namespace jhamnerx\LaravelIdGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -13,9 +15,9 @@ class IdGeneratorServiceProvider extends ServiceProvider
     {
     }
 
-    
+
     public function register()
     {
-        $this->app->make('Haruncpi\LaravelIdGenerator\IdGenerator');
+        $this->app->make('jhamnerx\LaravelIdGenerator\IdGenerator');
     }
 }
