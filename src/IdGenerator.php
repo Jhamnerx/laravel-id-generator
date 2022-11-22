@@ -104,6 +104,10 @@ class IdGenerator
         $resetOnPrefixChange =  array_key_exists('reset_on_prefix_change', $configArr)
             ? $configArr['reset_on_prefix_change']
             : false;
+
+        $showPrefix =  array_key_exists('show_prefix', $configArr)
+            ? $configArr['show_prefix']
+            : true;
         $length = $configArr['length'];
 
         $fieldInfo = (new self)->getFieldType($table, $field);
@@ -135,6 +139,7 @@ class IdGenerator
         $total = DB::select(trim($totalQuery));
 
         if ($total[0]->total) {
+
             if ($resetOnPrefixChange) {
                 $maxIdSql = "SELECT MAX(%s) AS maxid FROM %s WHERE %s LIKE %s %s";
                 $maxQuery = sprintf($maxIdSql, $field, $table, $field, "'" . $prefix . "%'", trim(str_replace("WHERE", "AND", $whereString)));
@@ -146,9 +151,19 @@ class IdGenerator
             $maxFullId = $queryResult[0]->maxid;
 
             $maxId = substr($maxFullId, $prefixLength, $idLength);
-            return $prefix . str_pad((int)$maxId + 1, $idLength, '0', STR_PAD_LEFT);
+
+            if ($showPrefix) {
+                return $prefix . str_pad((int)$maxId + 1, $idLength, '0', STR_PAD_LEFT);
+            } else {
+                return str_pad((int)$maxId + 1, $idLength, '0', STR_PAD_LEFT);
+            }
         } else {
-            return $prefix . str_pad(1, $idLength, '0', STR_PAD_LEFT);
+
+            if ($showPrefix) {
+                return $prefix . str_pad(1, $idLength, '0', STR_PAD_LEFT);
+            } else {
+                return str_pad(1, $idLength, '0', STR_PAD_LEFT);
+            }
         }
     }
 }
